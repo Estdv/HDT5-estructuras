@@ -4,6 +4,9 @@
 #Fecha: 1 de marzo 2019
 
 
+#las colaas son del tamanio de la cantida de procesos
+#head y tail empiezan siendo -1
+
 def Enqueue(x, head, tail, cola[], procesos):
     if (((tail + 1)% proceos) == head):
         print("Cola llena")
