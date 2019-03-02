@@ -49,7 +49,7 @@ class Proceso:
                 op=0
 
                 while not self.terminated:
-                    with componentes.CPU.request() as request:
+                    with componentes.CPU.request() as request: #ref http://docs.python-requests.org/en/master/
                         print(f"El proceso es: ",self.id," La espera del CPU es de:",env.now,)
                         yield request
 #para que cuando use instruccion lo mantenga siempre en el parametro deseado
@@ -72,7 +72,7 @@ class Proceso:
                         self.todoTiempo = int(self.finalTiempo - self.primerTiempo)
                         print(self.todoTiempo)
                         tiempo.insert(self.id, self.todoTiempo)
-                        componentes.RAM.put(self.ramMin)
+                        
 
 #Main en el que se hacen los procesos
 #referencia tsobre variables tomada de https://es.stackoverflow.com/questions/4034/cu%C3%A1l-es-la-diferencia-entre-usr-bin-python-y-usr-bin-env-python
