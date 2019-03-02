@@ -57,8 +57,8 @@ class Proceso:
                             if self.instruccion>  0:
                                 self.instruccion -=1
                                 op=random.randint(1,2) # para que sea discreto https://docs.scipy.org/doc/numpy-1.15.1/reference/generated/numpy.random.randint.html
-
-                        yield env.timeout(1)
+#el cpu debe esperar para otro proceso
+                        yield env.timeout(1) 
 
                         if op==1:
                             print(f"El proceso es de: ",self.id," El In Out es: ",env.now,)
@@ -70,7 +70,6 @@ class Proceso:
                         print(f"El proceso es: ",self.id," ha finalizo en: ",env.now," Estado: Terminated " )
                         self.finalTiempo = env.now
                         self.todoTiempo = int(self.finalTiempo - self.primerTiempo)
-                        print(self.todoTiempo)
                         tiempo.insert(self.id, self.todoTiempo)
                         
 
@@ -78,9 +77,9 @@ class Proceso:
 #referencia tsobre variables tomada de https://es.stackoverflow.com/questions/4034/cu%C3%A1l-es-la-diferencia-entre-usr-bin-python-y-usr-bin-env-python
 def procesos(env, componentes): #env permite correr programas modificados
     for x in range(cantProcesos):
-        tiempo = math.exp(1.0/intervaloProcesos) #segun se indico en hoja
+        otroTiempo = math.exp(1.0/intervaloProcesos) #segun se indico en hoja
         Proceso(x, env, componentes)
-        yield (env.timeout(tiempo))  # tiempo en crearse
+        yield (env.timeout(otroTiempo))  # tiempo en crearse
 
 def main(componentes):
          # Environment  # Componentes (RAM Y CPU)
