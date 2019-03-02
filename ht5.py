@@ -9,10 +9,10 @@ import statistics
 #numero de instrucciones
 random.seed(10) #para generar siempre los random como se deses recurso: https://stackoverflow.com/questions/22639587/random-seed-what-does-it-do
 ram= 100
-cpu=1
-cantProcesos= 100
-intervaloProcesos=1
-instrucciones=6
+cpu= int(input("Ingrese la cantidad de procesadores"))
+cantProcesos= int(input("Ingrese la cantidad de procesos"))
+intervaloProcesos= int(input("Ingrese el intervalo"))
+instrucciones= nt(input("Ingrese la cantidad de instrucciones"))
 tiempoIO= 1
 tiempo= []
 
