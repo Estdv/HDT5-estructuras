@@ -1,5 +1,7 @@
 #Anddrea Paniagua 18733
 #Esteban del Valle 18221
+#Adrea Paniagua 18733
+#Esteban del Valle 18221
 #Este programa funciona con simpy para realizar simulaciones
 import simpy
 import random
@@ -9,77 +11,86 @@ import statistics
 #numero de instrucciones
 random.seed(10) #para generar siempre los random como se deses recurso: https://stackoverflow.com/questions/22639587/random-seed-what-does-it-do
 ram= 100
-cpu= int(input("Ingrese la cantidad de procesadores"))
-cantProcesos= int(input("Ingrese la cantidad de procesos"))
-intervaloProcesos= int(input("Ingrese el intervalo"))
-instrucciones= int(input("Ingrese la cantidad de instrucciones"))
+cpu= int(input("Ingrese la cantidad de procesadores: "))
+cantProcesos= int(input("Ingrese la cantidad de procesos: "))
+intervaloProcesos= int(input("Ingrese el intervalo: "))
+instrucciones= int(input("Ingrese la cantidad de instrucciones: "))
 tiempoIO= 1
-tiempo= []
-
+tiempo= [] #guardara los tiempos de los procesos
+# paar definir clases, referencia file:///C:/Users/Andrea%20Paniagua/Downloads/Python%20Crash%20Course.pdf%20(%20PDFDrive.com%20).pdf
 class Componentes:
        def __init__(self,env): #siempre en class se define init recurso:file:///C:/Users/Andrea%20Paniagua/Downloads/Python%20Crash%20Course.pdf%20(%20PDFDrive.com%20).pdf
-            self.RAM=simpy.Container(env,init=ram)
-            self.CPU= simpy.Resource(env,init=ram)
-
+            self.RAM=simpy.Container(env,init = ram, capacity = ram)
+            self.CPU= simpy.Resource(env,capacity = cpu)
+#clase de los objetos a utilizar
+#cuando se libera el CPU se utiliza el proceso
 class Proceso:
-       def __init__(self, id, env,componnetes):
+       def __init__(self, id, env,componentes): #instanciar los atributos a usar en python es .self
            self.env=env
-           self.instruccion=random.randint(1,19)
+           self.instruccion=random.randint(1,10) #cuando e CPU tiene menos de 3 se libera rapido
            self.ramMin=random.randint(1,10)
-           self.id=id
+           self.id=id #para tomar un parametro ref: https://www.programiz.com/python-programming/methods/built-in/id
            self.terminated=False
            self.componentes=componentes
-           self.primerTiempo=primerTiempo
-           self.finalTiempo=finalTiempo
-           self.todoTiempo=todoTiempo
-           self.proceso=rnv.Proceso(self.procesos(env,componentes))
-
-       def procesos(self,env,componentes):
-           self.primerTiempo=env.ya
-           print("El proceso: %s: Se ha creado en : %d" %(self.id, self.primerTiempo))
-           with componentes.RAM.get(self.ramMin)as ram:
-               
+           self.primerTiempo=0
+           self.finalTiempo=0
+           self.todoTiempo=0
+           self.proceso=env.process(self.procesos(env,componentes))
+#funcion para ahorrar repetir passo cada vez ue necesita procesar algo
+       def procesos(self,env,componentes): 
+           self.primerTiempo=env.now #para iniciar tiempo https://simpy.readthedocs.io/en/latest/topical_guides/environments.html
+           print(f"El proceso: ",self.id," Se ha creado en : ",self.primerTiempo,)
+           with componentes.RAM.get(self.ramMin)as ram: #para utilizar los mismos componentes y ahorrar lineas ref: https://docs.python.org/3/reference/compound_stmts.html
+            #yield para simpy
                 yield ram
 
-                #ram
-                print("El proceso es: %s: La ram es: %d (wait)"% (self.id, env.ya))
+                #proceso de la ram
+                print("El proceso es: ",self.id," La ram es: ",env.now,"Estado:Wait")
                 op=0
 
                 while not self.terminated:
                     with componentes.CPU.request() as request:
-                        print("El proceso es: %s : La espera del CPU es de: %d (wait)"% (self.id, env.ya))
+                        print(f"El proceso es: ",self.id," La espera del CPU es de:",env.now,)
                         yield request
-
-                        for i in range (instruccion):
+#para que cuando use instruccion lo mantenga siempre en el parametro deseado
+                        for x in range (self.instruccion):
                             if self.instruccion>  0:
                                 self.instruccion -=1
-                                op=random.randint(1,2)
+                                op=random.randint(1,2) # para que sea discreto https://docs.scipy.org/doc/numpy-1.15.1/reference/generated/numpy.random.randint.html
 
                         yield env.timeout(1)
 
                         if op==1:
-                            print("El proceso es de: %s: El In Out es %d"% (self.id, env.ya))
-                            yield env.timeout(ioTime)
+                            print(f"El proceso es de: ",self.id," El In Out es: ",env.now,)
+                            yield env.timeout(tiempoIO)
 
                         if self.instruccion==0:
                             self.terminated= True
 
-                    print("El proceso es: %s : finalizo en: %d (Estado: Terminated)" %(self.id, env.ya))
-                    componentes.RAM.put(self.minRam)
+                        print(f"El proceso es: ",self.id," ha finalizo en: ",env.now," Estado: Terminated " )
+                        self.finalTiempo = env.now
+                        self.todoTiempo = int(self.finalTiempo - self.primerTiempo)
+                        print(self.todoTiempo)
+                        tiempo.insert(self.id, self.todoTiempo)
+                        componentes.RAM.put(self.ramMin)
 
 #Main en el que se hacen los procesos
 #referencia tsobre variables tomada de https://es.stackoverflow.com/questions/4034/cu%C3%A1l-es-la-diferencia-entre-usr-bin-python-y-usr-bin-env-python
 def procesos(env, componentes): #env permite correr programas modificados
-    env = simpy.Environment()
-    componentes = Componentes(env)#RAM Y CPU
-    env.procesos(procesos(env,componentes))#procesos
-    env.run()
-    for i in range(cantidadProcesos):
-        tiempo = math.exp(1.0/intervaloProcesos)
-        Proceso(i, env, componentes)
-        print (env.timeout(tiempo))  # tiempo en crearse
+    for x in range(cantProcesos):
+        tiempo = math.exp(1.0/intervaloProcesos) #segun se indico en hoja
+        Proceso(x, env, componentes)
+        yield (env.timeout(tiempo))  # tiempo en crearse
+
+def main(componentes):
+         # Environment  # Componentes (RAM Y CPU)
+       env.process(procesos(env, componentes))  # Se crean procesos
+       env.run()
+        
 #Resultados requeridos
 #referencia https://docs.python.org/3/library/statistics.html
+env = simpy.Environment()
+main(Componentes(env))
 desviacion = statistics.stdev(tiempo) 
 tiempoProm = statistics.mean(tiempo)         
 
