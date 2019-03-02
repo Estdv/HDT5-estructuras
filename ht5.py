@@ -12,15 +12,9 @@ ram= 100
 cpu= int(input("Ingrese la cantidad de procesadores"))
 cantProcesos= int(input("Ingrese la cantidad de procesos"))
 intervaloProcesos= int(input("Ingrese el intervalo"))
-instrucciones= nt(input("Ingrese la cantidad de instrucciones"))
+instrucciones= int(input("Ingrese la cantidad de instrucciones"))
 tiempoIO= 1
 tiempo= []
-
-#Resultados requeridos
-#referencia https://docs.python.org/3/library/statistics.html
-desviacion = statistics.stdev(procesoTiempo) 
-tiempoProm = statistics.mean(procesoTiempo)
-
 
 class Componentes:
        def __init__(self,env): #siempre en class se define init recurso:file:///C:/Users/Andrea%20Paniagua/Downloads/Python%20Crash%20Course.pdf%20(%20PDFDrive.com%20).pdf
@@ -36,7 +30,7 @@ class Proceso:
            self.terminated=False
            self.componentes=componentes
            self.primerTiempo=primerTiempo
-           self.finalTiempo=finslTiempo
+           self.finalTiempo=finalTiempo
            self.todoTiempo=todoTiempo
            self.proceso=rnv.Proceso(self.procesos(env,componentes))
 
@@ -74,9 +68,7 @@ class Proceso:
                     componentes.RAM.put(self.minRam)
 
 #Main en el que se hacen los procesos
-
 #referencia tsobre variables tomada de https://es.stackoverflow.com/questions/4034/cu%C3%A1l-es-la-diferencia-entre-usr-bin-python-y-usr-bin-env-python
-
 def procesos(env, componentes): #env permite correr programas modificados
     env = simpy.Environment()
     componentes = Componentes(env)#RAM Y CPU
@@ -85,19 +77,13 @@ def procesos(env, componentes): #env permite correr programas modificados
     for i in range(cantidadProcesos):
         tiempo = math.exp(1.0/intervaloProcesos)
         Proceso(i, env, componentes)
-        yield (env.timeout(tiempo))  # tiempo en crearse
+        print (env.timeout(tiempo))  # tiempo en crearse
+#Resultados requeridos
+#referencia https://docs.python.org/3/library/statistics.html
+desviacion = statistics.stdev(tiempo) 
+tiempoProm = statistics.mean(tiempo)         
 
-        
-       
- 
-print (", La desviacion Estandar: ", desviacion, "," "El tiempo promedio es:  ", tiempoProm, )
-
-
-
-self.finalTiempo= env.ya
-self.todoTiempo=int (self.finalTiempo - self.primerTiempo)
-procesoTiempo.insert(self.id, self.todoTiempo)
-
+print (", La desviacion Estandar: ", desviacion, ",El tiempo promedio es:  ", tiempoProm, )
     
                     
        
